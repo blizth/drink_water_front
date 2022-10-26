@@ -1,6 +1,5 @@
 import {Box, Button, Flex, Text} from "@chakra-ui/react";
 import {StateMachineInput, useRive, useStateMachineInput} from "@rive-app/react-canvas";
-import {useEffect, useState} from "react";
 
 function App() {
   const {rive, RiveComponent} = useRive({
