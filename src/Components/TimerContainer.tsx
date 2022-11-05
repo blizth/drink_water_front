@@ -5,20 +5,8 @@ import {convertTime} from "../Utils/stringUtils";
 import Watercup from "./Watercup";
 
 export default function TimerContainer() {
-  let defaultSeconds = 1 * 60;
-  enum TimerStatus {
-    Start = "start",
-    Pause = "pause",
-    Restart = "restart",
-  }
+  const defaultSeconds = 1 * 60;
   const [waterLevel, setWaterLevel] = useState<number>(100);
-
-  const restartTimer = () => {
-    setPaused(true);
-    setDuration(defaultSeconds);
-    setWaterLevel(100);
-  };
-
   const [duration, setDuration] = useState(defaultSeconds);
   const [paused, setPaused] = useState(true);
 
@@ -35,6 +23,12 @@ export default function TimerContainer() {
       setPaused(true);
     }
   }, 1000);
+
+  const restartTimer = () => {
+    setPaused(true);
+    setDuration(defaultSeconds);
+    setWaterLevel(100);
+  };
 
   return (
     <Box bg="gray.700" p={4} color="white" h="100vh">
