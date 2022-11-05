@@ -1,4 +1,3 @@
-import {Button} from "@chakra-ui/react";
 import {StateMachineInput, useRive, useStateMachineInput} from "@rive-app/react-canvas";
 import React, {useEffect} from "react";
 
@@ -21,26 +20,10 @@ export default function Watercup({waterLevel}: WaterCupProps) {
   useEffect(() => {
     changeWaterLevel(waterLevel, waterLevelInput as StateMachineInput);
   }, [waterLevel, waterLevelInput]);
-  //   useEffect(() => {
-  //
-  //   }, [waterLevel, waterLevelInput]);
 
   const changeWaterLevel = (levelChange: number, waterLevelInput: StateMachineInput) => {
-    // if (Number(waterLevelInput.value) + levelChange >= 100) return;
-    // if (Number(waterLevelInput.value) + levelChange <= 0) return;
     if (waterLevelInput === null) return;
     waterLevelInput!.value = levelChange;
   };
-  return (
-    <React.Fragment>
-      <RiveComponent style={{alignSelf: "center"}} />
-      <Button
-        alignSelf="center"
-        m={2}
-        bg="gray.500"
-        onClick={() => changeWaterLevel(50, waterLevelInput as StateMachineInput)}>
-        Increase water level
-      </Button>
-    </React.Fragment>
-  );
+  return <RiveComponent style={{alignSelf: "center", paddingBottom: "-200px"}} />;
 }
