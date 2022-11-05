@@ -1,5 +1,6 @@
 import {Box, Button, Flex, Text} from "@chakra-ui/react";
 import React, {useEffect, useState} from "react";
+import {useInterval} from "../useInterval";
 import {convertTime} from "../Utils/stringUtils";
 import Watercup from "./Watercup";
 
@@ -10,89 +11,46 @@ export default function TimerContainer() {
     Pause = "pause",
     Restart = "restart",
   }
-
-  const [timerStatus, setTimerStatus] = useState<TimerStatus>(TimerStatus.Pause);
-  const [seconds, setSeconds] = useState<number>(defaultSeconds);
   const [waterLevel, setWaterLevel] = useState<number>(100);
 
-  useEffect(() => {
+  const restartTimer = () => {
+    setPaused(true);
+    setDuration(defaultSeconds);
+    setWaterLevel(100);
+  };
+
+  const [duration, setDuration] = useState(defaultSeconds);
+  const [paused, setPaused] = useState(true);
+
+  useInterval(() => {
     function convertSecondsToWaterLevel() {
-      let percent = (seconds * 100) / defaultSeconds;
+      let percent = (duration * 100) / defaultSeconds;
       setWaterLevel(percent);
     }
-
-    let interval: number | undefined;
-
-    if (!interval && timerStatus === TimerStatus.Start) {
-      interval = window.setInterval(() => {
-        setSeconds((seconds) => seconds - 1);
-        convertSecondsToWaterLevel();
-      }, 1000);
+    convertSecondsToWaterLevel();
+    if (!paused && duration > 0) {
+      setDuration(duration - 1);
     }
-
-    if (timerStatus === TimerStatus.Pause && seconds > 0) {
-      clearInterval(interval);
+    if (duration <= 0) {
+      setPaused(true);
     }
-
-    if (seconds <= 0) {
-      clearInterval(interval);
-      setTimerStatus(TimerStatus.Restart);
-      convertSecondsToWaterLevel();
-    }
-
-    return () => clearInterval(interval);
-  }, [seconds, timerStatus, TimerStatus, defaultSeconds]);
-
-  //   useEffect(() => {
-  //     setSeconds(defaultSeconds);
-  //     setTimerStatus(TimerStatus.Restart);
-  //   }, [defaultSeconds, TimerStatus.Restart]);
-
-  const onTimerButtonClick = (status: TimerStatus) => {
-    if (status === TimerStatus.Restart) {
-      setTimerStatus(TimerStatus.Pause);
-      setSeconds(defaultSeconds);
-      setWaterLevel(100);
-      return;
-    }
-
-    if (status === TimerStatus.Pause) {
-      setTimerStatus(TimerStatus.Pause);
-      return;
-    }
-
-    if (status === TimerStatus.Start) {
-      setTimerStatus(TimerStatus.Start);
-    }
-  };
+  }, 1000);
 
   return (
     <Box bg="gray.700" p={4} color="white" h="100vh">
       <Flex h="100%" direction="column" justifyContent="center">
         <Watercup waterLevel={waterLevel} />
         <Text fontSize="6xl" alignSelf="center">
-          {convertTime(seconds)}
+          {convertTime(duration)}
         </Text>
         <Flex alignSelf="center">
-          <Button
-            alignSelf="center"
-            m={2}
-            bg="gray.500"
-            onClick={() => onTimerButtonClick(TimerStatus.Start)}>
+          <Button alignSelf="center" m={2} bg="gray.500" onClick={() => setPaused(false)}>
             Start Timer
           </Button>
-          <Button
-            alignSelf="center"
-            m={2}
-            bg="gray.500"
-            onClick={() => onTimerButtonClick(TimerStatus.Pause)}>
+          <Button alignSelf="center" m={2} bg="gray.500" onClick={() => setPaused(true)}>
             Stop Timer
           </Button>
-          <Button
-            alignSelf="center"
-            m={2}
-            bg="gray.500"
-            onClick={() => onTimerButtonClick(TimerStatus.Restart)}>
+          <Button alignSelf="center" m={2} bg="gray.500" onClick={() => restartTimer()}>
             Clear timer
           </Button>
         </Flex>
